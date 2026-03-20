@@ -1,0 +1,242 @@
+<div class="orders-container">
+  <!-- Header Section -->
+  <div class="orders-header">
+    <div class="header-left">
+      <h1>My Orders</h1>
+      <p>Track and manage your orders</p>
+    </div>
+    <div class="header-right">
+      <button class="btn-filter" (click)="showFilters = !showFilters">
+        <i class="fas fa-filter"></i> Filter
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Bar (Collapsible) -->
+  <div class="filter-bar" *ngIf="showFilters">
+    <div class="filter-group">
+      <label>Status:</label>
+      <select (change)="filterByStatus($event)">
+        <option value="all">All Orders</option>
+        <option value="pending">Pending</option>
+        <option value="processing">Processing</option>
+        <option value="shipped">Shipped</option>
+        <option value="delivered">Delivered</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Date:</label>
+      <input type="date" (change)="filterByDate($event)">
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading your orders...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div class="error-message" *ngIf="error">
+    <i class="fas fa-exclamation-circle"></i>
+    <p>{{ error }}</p>
+    <button class="btn-retry" (click)="loadOrders()">Try Again</button>
+  </div>
+
+  <!-- Orders List -->
+  <div class="orders-list" *ngIf="!loading && !error">
+    <!-- No Orders State -->
+    <div class="no-orders" *ngIf="filteredOrders.length === 0">
+      <div class="no-orders-icon">
+        <i class="fas fa-box-open"></i>
+      </div>
+      <h3>No orders found</h3>
+      <p>Looks like you haven't placed any orders yet</p>
+      <button class="btn-shop-now" routerLink="/home">Start Shopping</button>
+    </div>
+
+    <!-- Orders Grid -->
+    <div class="orders-grid" *ngIf="filteredOrders.length > 0">
+      <div class="order-card" *ngFor="let order of filteredOrders" (click)="viewOrderDetails(order)">
+        <!-- Order Header -->
+        <div class="order-card-header">
+          <div class="order-info">
+            <span class="order-id">Order #{{ order.id }}</span>
+            <span class="order-date">
+              <i class="far fa-calendar-alt"></i>
+              {{ formatDate(order.order_date) }}
+            </span>
+          </div>
+          <div class="order-status">
+            <span class="status-badge" [class]="getStatusClass(order.status)">
+              {{ order.status || 'Pending' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Order Items Preview -->
+        <div class="order-items-preview">
+          <div class="preview-items">
+            <div class="preview-item" *ngFor="let item of (order.items || []).slice(0, 3)">
+              <span class="item-name">{{ item?.product_name || 'Product' }}</span>
+              <span class="item-qty">x{{ item?.quantity || 0 }}</span>
+            </div>
+          </div>
+          <div class="more-items" *ngIf="(order.items && order.items.length) > 3">
+            <i class="fas fa-plus-circle"></i>
+            +5
+            <!-- {{ (order.items?.length || 0) - 3 }}  -->
+            more items
+          </div>
+        </div>
+
+        <!-- Order Footer -->
+        <div class="order-card-footer">
+          <div class="order-total">
+            <span>Total Amount:</span>
+            <strong>₹{{ order.total_amount | number:'1.2-2' }}</strong>
+          </div>
+          <div class="order-payment-status">
+            <span class="payment-badge" [class]="getStatusClass(order.payment_status)">
+              <i class="fas fa-credit-card"></i>
+              {{ order.payment_status || 'Pending' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Details Modal -->
+  <div class="modal-overlay" *ngIf="selectedOrder" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Order Details #{{ selectedOrder.id }}</h2>
+        <button class="modal-close" (click)="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Status Timeline -->
+        <div class="status-timeline">
+          <div class="timeline-step" [class.completed]="selectedOrder.status !== 'cancelled'">
+            <div class="step-icon">
+              <i class="fas fa-check"></i>
+            </div>
+            <div class="step-content">
+              <div class="step-label">Order Placed</div>
+              <div class="step-date">{{ formatDate(selectedOrder.order_date) }}</div>
+            </div>
+          </div>
+
+          <div class="timeline-step" [class.completed]="selectedOrder.status === 'shipped' || selectedOrder.status === 'delivered'">
+            <div class="step-icon">
+              <i class="fas fa-truck"></i>
+            </div>
+            <div class="step-content">
+              <div class="step-label">Shipped</div>
+            </div>
+          </div>
+
+          <div class="timeline-step" [class.completed]="selectedOrder.status === 'delivered'">
+            <div class="step-icon">
+              <i class="fas fa-home"></i>
+            </div>
+            <div class="step-content">
+              <div class="step-label">Delivered</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Details Grid -->
+        <div class="details-grid">
+          <!-- Shipping Address -->
+          <div class="detail-card">
+            <h3>
+              <i class="fas fa-map-marker-alt"></i>
+              Shipping Address
+            </h3>
+            <div class="address-content">
+              <p>{{ selectedOrder.shipping_address || 'N/A' }}</p>
+              <p>{{ selectedOrder.shipping_city || '' }}, {{ selectedOrder.shipping_state || '' }} {{ selectedOrder.shipping_pincode || '' }}</p>
+            </div>
+          </div>
+
+          <!-- Payment Information -->
+          <div class="detail-card">
+            <h3>
+              <i class="fas fa-credit-card"></i>
+              Payment Information
+            </h3>
+            <div class="payment-content">
+              <div class="payment-row">
+                <span class="label">Method:</span>
+                <span class="value">{{ (selectedOrder.transaction?.payment_method || 'N/A') | uppercase }}</span>
+              </div>
+              <div class="payment-row">
+                <span class="label">Transaction ID:</span>
+                <span class="value">{{ selectedOrder.transaction?.transaction_id || 'N/A' }}</span>
+              </div>
+              <div class="payment-row">
+                <span class="label">Status:</span>
+                <span class="value">
+                  <span class="status-badge" [class]="getStatusClass(selectedOrder.payment_status)">
+                    {{ selectedOrder.payment_status || 'Pending' }}
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Items Table -->
+        <div class="items-section">
+          <h3>
+            <i class="fas fa-shopping-bag"></i>
+            Order Items
+          </h3>
+          <div class="items-table-responsive">
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of selectedOrder.items || []">
+                  <td class="product-name">{{ item?.product_name || 'Product' }}</td>
+                  <td class="product-qty">{{ item?.quantity || 0 }}</td>
+                  <td class="product-price">₹{{ item?.price || 0 }}</td>
+                  <td class="product-subtotal">₹{{ item?.subtotal || 0 }}</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" class="total-label">Total Amount:</td>
+                  <td class="total-value">₹{{ selectedOrder.total_amount | number:'1.2-2' }}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="modal-actions">
+          <button class="btn-receipt" (click)="downloadReceipt(selectedOrder.id)">
+            <i class="fas fa-download"></i>
+            Download Receipt
+          </button>
+          <button class="btn-close" (click)="closeModal()">
+            <i class="fas fa-times"></i>
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,283 @@
+<div class="register-page">
+  <div class="register-container">
+    <!-- Left Side - Branding with Moving Elements -->
+    <div class="register-left">
+      <!-- Animated Background Elements -->
+      <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+      </div>
+
+      <div class="brand-content">
+        <div class="animated-logo">
+          <div class="logo-circle">
+            <i class="fas fa-shopping-bag"></i>
+          </div>
+          <div class="logo-particles">
+            <span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <h1 class="brand-name">ShopEasy</h1>
+        <p class="brand-tagline">Join the shopping revolution</p>
+      </div>
+
+      <div class="welcome-section">
+        <h2>Create Account</h2>
+        <p>Start your amazing shopping journey</p>
+      </div>
+
+      <div class="floating-features">
+        <div class="feature-card floating" style="animation-delay: 0s">
+          <div class="feature-icon delivery">
+            <i class="fas fa-truck"></i>
+          </div>
+          <div class="feature-text">
+            <h4>Free Delivery</h4>
+            <p>On orders above ₹999</p>
+          </div>
+        </div>
+
+        <div class="feature-card floating" style="animation-delay: 0.5s">
+          <div class="feature-icon returns">
+            <i class="fas fa-undo-alt"></i>
+          </div>
+          <div class="feature-text">
+            <h4>Easy Returns</h4>
+            <p>30-day return policy</p>
+          </div>
+        </div>
+
+        <div class="feature-card floating" style="animation-delay: 1s">
+          <div class="feature-icon secure">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div class="feature-text">
+            <h4>Secure Payments</h4>
+            <p>100% protected</p>
+          </div>
+        </div>
+
+        <div class="feature-card floating" style="animation-delay: 1.5s">
+          <div class="feature-icon support">
+            <i class="fas fa-headset"></i>
+          </div>
+          <div class="feature-text">
+            <h4>24/7 Support</h4>
+            <p>Dedicated help</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <div class="stat-item pulse">
+          <span class="stat-value">2M+</span>
+          <span class="stat-label">Happy Customers</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item pulse" style="animation-delay: 0.3s">
+          <span class="stat-value">50K+</span>
+          <span class="stat-label">Products</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item pulse" style="animation-delay: 0.6s">
+          <span class="stat-value">100%</span>
+          <span class="stat-label">Secure</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side - Registration Form -->
+    <div class="register-right">
+      <div class="form-container">
+        <div class="form-header">
+          <h2>Create Account</h2>
+          <p>Join ShopEasy for amazing shopping experience</p>
+        </div>
+
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+          <!-- Name Field -->
+          <div class="form-group">
+            <label for="name">
+              <i class="fas fa-user"></i>
+              Full Name <span class="required">*</span>
+            </label>
+            <div class="input-wrapper" [class.error]="isFieldInvalid('name')">
+              <input 
+                type="text" 
+                id="name" 
+                formControlName="name"
+                placeholder="Enter your full name"
+                (blur)="markTouched('name')"
+              >
+              <div class="input-highlight"></div>
+            </div>
+            <div class="error-message" *ngIf="showError('name')">
+              <i class="fas fa-exclamation-circle"></i>
+              <span>Name is required</span>
+            </div>
+          </div>
+
+          <!-- Age & Phone Row -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="age">
+                <i class="fas fa-calendar-alt"></i>
+                Age <span class="required">*</span>
+              </label>
+              <div class="input-wrapper" [class.error]="isFieldInvalid('age')">
+                <input 
+                  type="number" 
+                  id="age" 
+                  formControlName="age"
+                  placeholder="Enter your age"
+                  (blur)="markTouched('age')"
+                >
+                <div class="input-highlight"></div>
+              </div>
+              <div class="error-message" *ngIf="showError('age')">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Age must be 18-120</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="phone">
+                <i class="fas fa-phone-alt"></i>
+                Phone <span class="required">*</span>
+              </label>
+              <div class="input-wrapper" [class.error]="isFieldInvalid('phone')">
+                <input 
+                  type="tel" 
+                  id="phone" 
+                  formControlName="phone"
+                  placeholder="10-digit mobile"
+                  maxlength="10"
+                  (blur)="markTouched('phone')"
+                >
+                <div class="input-highlight"></div>
+              </div>
+              <div class="error-message" *ngIf="showError('phone')">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Valid 10-digit number</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Email Field -->
+          <div class="form-group">
+            <label for="email">
+              <i class="fas fa-envelope"></i>
+              Email Address <span class="required">*</span>
+            </label>
+            <div class="input-wrapper" [class.error]="isFieldInvalid('email')">
+              <input 
+                type="email" 
+                id="email" 
+                formControlName="email"
+                placeholder="Enter your email"
+                (blur)="markTouched('email')"
+              >
+              <div class="input-highlight"></div>
+            </div>
+            <div class="error-message" *ngIf="showError('email')">
+              <i class="fas fa-exclamation-circle"></i>
+              <span>Valid email required</span>
+            </div>
+          </div>
+
+          <!-- Password Field -->
+          <div class="form-group">
+            <label for="password">
+              <i class="fas fa-lock"></i>
+              Password <span class="required">*</span>
+            </label>
+            <div class="input-wrapper" [class.error]="isFieldInvalid('password')">
+              <input 
+                [type]="showPassword ? 'text' : 'password'"
+                id="password" 
+                formControlName="password"
+                placeholder="At least 6 characters"
+                (blur)="markTouched('password')"
+              >
+              <button type="button" class="password-toggle" (click)="showPassword = !showPassword" tabindex="-1">
+                <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              </button>
+              <div class="input-highlight"></div>
+            </div>
+            <div class="password-strength" *ngIf="registerForm.get('password')?.value">
+              <div class="strength-bar">
+                <div class="strength-fill" [style.width]="getPasswordStrength().width" 
+                     [style.background]="getPasswordStrength().color"></div>
+              </div>
+              <span class="strength-text" [style.color]="getPasswordStrength().color">
+                {{ getPasswordStrength().text }}
+              </span>
+            </div>
+            <div class="error-message" *ngIf="showError('password')">
+              <i class="fas fa-exclamation-circle"></i>
+              <span>Min 6 characters</span>
+            </div>
+          </div>
+
+          <!-- Confirm Password Field -->
+          <div class="form-group">
+            <label for="confirmPassword">
+              <i class="fas fa-lock"></i>
+              Confirm Password <span class="required">*</span>
+            </label>
+            <div class="input-wrapper" [class.error]="showConfirmPasswordError()">
+              <input 
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                id="confirmPassword" 
+                formControlName="confirmPassword"
+                placeholder="Re-enter password"
+                (blur)="markTouched('confirmPassword')"
+              >
+              <button type="button" class="password-toggle" (click)="showConfirmPassword = !showConfirmPassword" tabindex="-1">
+                <i [class]="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              </button>
+              <div class="input-highlight"></div>
+            </div>
+            <div class="error-message" *ngIf="showConfirmPasswordError()">
+              <i class="fas fa-exclamation-circle"></i>
+              <span>Passwords do not match</span>
+            </div>
+          </div>
+
+          <!-- Terms Checkbox -->
+          <div class="terms-group">
+            <label class="checkbox-container">
+              <input type="checkbox" formControlName="terms">
+              <span class="checkmark"></span>
+              <span class="terms-text">
+                I agree to <a href="#">Terms</a> & <a href="#">Privacy</a>
+              </span>
+            </label>
+          </div>
+
+          <!-- Error Alert -->
+          <div class="alert alert-error" *ngIf="errorMessage">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>{{ errorMessage }}</span>
+          </div>
+
+          <!-- Register Button -->
+          <button type="submit" class="btn-register" [disabled]="registerForm.invalid || loading">
+            <span *ngIf="!loading">Create Account</span>
+            <span *ngIf="loading" class="spinner"></span>
+            <i class="fas fa-arrow-right" *ngIf="!loading"></i>
+          </button>
+
+          <!-- Login Link -->
+          <div class="login-link">
+            <span>Already have an account?</span>
+            <a routerLink="/login">Sign In</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

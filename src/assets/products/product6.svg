@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+    <rect width="400" height="400" fill="#1abc9c" />
+    <text x="50" y="150" font-family="Arial" font-size="24" font-weight="bold" fill="white">Digital Camera</text>
+    <text x="50" y="200" font-family="Arial" font-size="20" font-weight="bold" fill="white">Electronics</text>
+    <text x="50" y="280" font-family="Arial" font-size="28" font-weight="bold" fill="#ffd700">₹45,999</text>
+    <text x="120" y="350" font-family="Arial" font-size="16" fill="white">🛒 ShopEasy</text>
+    <circle cx="300" cy="100" r="40" fill="rgba(255,255,255,0.2)" />
+    <circle cx="320" cy="80" r="15" fill="rgba(255,255,255,0.3)" />
+</svg>

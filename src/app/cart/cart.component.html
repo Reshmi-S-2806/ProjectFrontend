@@ -1,0 +1,177 @@
+<div class="cart-container">
+  <h1>Shopping Cart</h1>
+
+  <div class="loading-spinner" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    {{error}}
+  </div>
+
+  <div class="cart-content" *ngIf="!loading && !error">
+    <div class="cart-items" *ngIf="cartItems.length > 0; else emptyCart">
+      <div class="cart-item" *ngFor="let item of cartItems">
+        <div class="item-image">
+          <img [src]="item.image_url" [alt]="item.name">
+        </div>
+        
+        <div class="item-details">
+          <h3>{{item.name}}</h3>
+          <p class="item-description">{{item.description}}</p>
+          <p class="item-price">₹{{item.price}}</p>
+        </div>
+        
+        <div class="item-quantity">
+          <button (click)="updateQuantity(item, -1)" [disabled]="item.quantity <= 1">-</button>
+          <span>{{item.quantity}}</span>
+          <button (click)="updateQuantity(item, 1)">+</button>
+        </div>
+        
+        <div class="item-subtotal">
+          <p>₹{{item.price * item.quantity}}</p>
+        </div>
+        
+        <div class="item-actions">
+          <button class="btn-remove" (click)="removeItem(item)">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="cart-actions">
+        <button class="btn-continue" (click)="continueShopping()">
+          <i class="fas fa-arrow-left"></i> Continue Shopping
+        </button>
+      </div>
+    </div>
+
+    <ng-template #emptyCart>
+      <div class="empty-cart">
+        <i class="fas fa-shopping-cart"></i>
+        <h2>Your cart is empty</h2>
+        <p>Looks like you haven't added anything to your cart yet</p>
+        <button class="btn-shop-now" (click)="continueShopping()">Shop Now</button>
+      </div>
+    </ng-template>
+
+    <!-- Cart Summary -->
+    <div class="cart-summary" *ngIf="cartItems.length > 0">
+      <h3>Price Details</h3>
+      
+      <div class="summary-row">
+        <span>Price ({{cartItems.length}} items)</span>
+        <span>₹{{subtotal}}</span>
+      </div>
+      
+      <div class="summary-row">
+        <span>Delivery Charges</span>
+        <span [class.free]="shipping === 0">
+          {{shipping === 0 ? 'Free' : '₹' + shipping}}
+        </span>
+      </div>
+      
+      <div class="summary-row">
+        <span>GST (18%)</span>
+        <span>₹{{tax | number:'1.2-2'}}</span>
+      </div>
+      
+      <div class="summary-row total">
+        <span>Total Amount</span>
+        <span>₹{{total | number:'1.2-2'}}</span>
+      </div>
+      
+      <div class="savings" *ngIf="shipping === 0">
+        You will save ₹40 on delivery charges
+      </div>
+      
+      <button class="btn-checkout" (click)="proceedToCheckout()">Proceed to Checkout</button>
+    </div>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div class="modal" *ngIf="showCheckout" (click)="showCheckout = false">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Shipping Details</h2>
+        <button class="btn-close" (click)="showCheckout = false">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <form [formGroup]="checkoutForm" (ngSubmit)="placeOrder()">
+          <div class="form-group">
+            <label for="shippingAddress">Address *</label>
+            <textarea 
+              id="shippingAddress" 
+              formControlName="shippingAddress"
+              rows="3"
+              [class.is-invalid]="checkoutForm.get('shippingAddress')?.invalid && checkoutForm.get('shippingAddress')?.touched"
+            ></textarea>
+            <div class="invalid-feedback" *ngIf="checkoutForm.get('shippingAddress')?.invalid && checkoutForm.get('shippingAddress')?.touched">
+              Address is required
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="shippingCity">City *</label>
+              <input 
+                type="text" 
+                id="shippingCity" 
+                formControlName="shippingCity"
+                [class.is-invalid]="checkoutForm.get('shippingCity')?.invalid && checkoutForm.get('shippingCity')?.touched"
+              >
+              <div class="invalid-feedback" *ngIf="checkoutForm.get('shippingCity')?.invalid && checkoutForm.get('shippingCity')?.touched">
+                City is required
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="shippingState">State *</label>
+              <input 
+                type="text" 
+                id="shippingState" 
+                formControlName="shippingState"
+                [class.is-invalid]="checkoutForm.get('shippingState')?.invalid && checkoutForm.get('shippingState')?.touched"
+              >
+              <div class="invalid-feedback" *ngIf="checkoutForm.get('shippingState')?.invalid && checkoutForm.get('shippingState')?.touched">
+                State is required
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="shippingPincode">Pincode *</label>
+            <input 
+              type="text" 
+              id="shippingPincode" 
+              formControlName="shippingPincode"
+              maxlength="6"
+              [class.is-invalid]="checkoutForm.get('shippingPincode')?.invalid && checkoutForm.get('shippingPincode')?.touched"
+            >
+            <div class="invalid-feedback" *ngIf="checkoutForm.get('shippingPincode')?.invalid && checkoutForm.get('shippingPincode')?.touched">
+              Please enter a valid 6-digit pincode
+            </div>
+          </div>
+          
+          <div class="order-summary">
+            <h4>Order Summary</h4>
+            <div class="summary-row">
+              <span>Total Items:</span>
+              <span>{{cartItems.length}}</span>
+            </div>
+            <div class="summary-row">
+              <span>Total Amount:</span>
+              <span>₹{{total | number:'1.2-2'}}</span>
+            </div>
+          </div>
+          
+          <button type="submit" class="btn-place-order" [disabled]="checkoutForm.invalid || loading">
+            <span *ngIf="!loading">Place Order</span>
+            <span *ngIf="loading" class="spinner"></span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

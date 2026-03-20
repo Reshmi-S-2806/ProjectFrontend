@@ -1,0 +1,187 @@
+<!-- Only show navbar when user is logged in -->
+<nav class="navbar" *ngIf="isLoggedIn">
+  <div class="nav-container">
+    <div class="nav-left">
+      <a routerLink="/home" class="logo">
+        <span class="logo-text">ShopEasy</span>
+        <span class="logo-tagline">Explore Now</span>
+      </a>
+    </div>
+
+    <!-- Attractive Search Box with Animation -->
+    <div class="nav-search">
+      <div class="search-wrapper">
+        <input 
+          type="text" 
+          placeholder="Search for products" 
+          class="search-input"
+          #searchInput
+          [value]="searchQuery"
+          (keyup.enter)="onSearch(searchInput.value)"
+          (input)="onSearchInput(searchInput.value)"
+        >
+        <button class="clear-search-btn" *ngIf="searchQuery" (click)="clearSearch()">
+          <i class="fas fa-times-circle"></i>
+        </button>
+        <button class="search-btn" (click)="onSearch(searchInput.value)">
+          <i class="fas fa-search"></i>
+          <span class="search-btn-text">Search</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <div class="cart-icon" routerLink="/cart">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-count" *ngIf="cartCount > 0">{{ cartCount }}</span>
+      </div>
+
+      <div class="profile-dropdown">
+  <div class="profile-trigger" (click)="toggleDropdown()">
+    <div class="profile-icon">{{ getUserInitials() }}</div>
+    <span class="user-name">{{ userName }}</span>
+    <i class="fas fa-chevron-down" [class.rotate]="showDropdown"></i>
+  </div>
+
+  <!-- FIXED: Uncommented the *ngIf directive -->
+  <div class="dropdown-menu" *ngIf="showDropdown" (click)="$event.stopPropagation()">
+    <div class="dropdown-header">
+      <div class="user-info">
+        <strong>{{ userName }}</strong>
+        <small>{{ userEmail }}</small>
+      </div>
+    </div>
+    <div class="dropdown-divider"></div>
+    <a (click)="goToProfile()" class="dropdown-item">
+      <i class="fas fa-user"></i> My Profile
+    </a>
+    <a (click)="goToOrders()" class="dropdown-item">
+      <i class="fas fa-box"></i> My Orders
+    </a>
+    <a (click)="goToCart()" class="dropdown-item">
+      <i class="fas fa-shopping-cart"></i> Cart
+    </a>
+    <a *ngIf="isAdmin" (click)="goToAdmin()" class="dropdown-item">
+      <i class="fas fa-chart-line"></i> Admin Dashboard
+    </a>
+    <a *ngIf="isAdmin" (click)="goToTransactions()" class="dropdown-item">
+      <i class="fas fa-credit-card"></i> Transaction Details
+    </a>
+    <div class="dropdown-divider"></div>
+    <a (click)="logout()" class="dropdown-item logout">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+  </div>
+</div>
+    </div>
+  </div>
+</nav>
+
+<!-- Simple header for login/register pages -->
+<header class="auth-header" *ngIf="!isLoggedIn">
+  <div class="auth-logo">
+    <span class="logo-text">ShopEasy</span>
+    <span class="logo-tagline">Explore Now</span>
+  </div>
+</header>
+
+<main>
+  <router-outlet></router-outlet>
+  <app-chatbot></app-chatbot>
+</main>
+<app-toast></app-toast>
+
+
+<!-- Enhanced Footer with Gradient Matching Login Page -->
+<footer class="footer" *ngIf="isLoggedIn">
+  <!-- Features Section -->
+  <div class="footer-features">
+    <div class="features-container">
+      <div class="feature-item floating" style="animation-delay: 0s">
+        <div class="feature-icon delivery">
+          <i class="fas fa-truck"></i>
+        </div>
+        <div class="feature-text">
+          <h4>Free Delivery</h4>
+          <p>On orders above ₹999</p>
+        </div>
+      </div>
+
+      <div class="feature-item floating" style="animation-delay: 0.2s">
+        <div class="feature-icon returns">
+          <i class="fas fa-undo-alt"></i>
+        </div>
+        <div class="feature-text">
+          <h4>Easy Returns</h4>
+          <p>30-day return policy</p>
+        </div>
+      </div>
+
+      <div class="feature-item floating" style="animation-delay: 0.4s">
+        <div class="feature-icon secure">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="feature-text">
+          <h4>Secure Payments</h4>
+          <p>100% secure transactions</p>
+        </div>
+      </div>
+
+      <div class="feature-item floating" style="animation-delay: 0.6s">
+        <div class="feature-icon support">
+          <i class="fas fa-headset"></i>
+        </div>
+        <div class="feature-text">
+          <h4>24/7 Support</h4>
+          <p>Dedicated customer support</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Footer Content -->
+  <div class="footer-container">
+    <div class="footer-section">
+      <h4>ABOUT</h4>
+      <ul>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+    
+    <div class="footer-section">
+      <h4>HELP</h4>
+      <ul>
+        <li><a href="#">Payments</a></li>
+        <li><a href="#">Shipping</a></li>
+        <li><a href="#">Cancellation</a></li>
+        <li><a href="#">FAQ</a></li>
+      </ul>
+    </div>
+    
+    <div class="footer-section">
+      <h4>POLICY</h4>
+      <ul>
+        <li><a href="#">Return Policy</a></li>
+        <li><a href="#">Terms Of Use</a></li>
+        <li><a href="#">Security</a></li>
+        <li><a href="#">Privacy</a></li>
+      </ul>
+    </div>
+    
+    <div class="footer-section">
+      <h4>SOCIAL</h4>
+      <ul>
+        <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+        <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+        <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+        <li><a href="#"><i class="fab fa-youtube"></i> YouTube</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 ShopEasy. All rights reserved.</p>
+  </div>
+</footer>

@@ -1,0 +1,330 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <h1>My Profile</h1>
+    <p>Manage your account information and preferences</p>
+  </div>
+
+  <div class="profile-content">
+    <!-- Sidebar -->
+    <div class="profile-sidebar">
+      <div class="user-info">
+        <div class="user-avatar">
+          <div class="avatar-circle">
+            <span class="avatar-initials">{{ getUserInitials() }}</span>
+          </div>
+        </div>
+        <h3>{{ user?.name }}</h3>
+        <p>{{ user?.email }}</p>
+        <p class="user-role" [class.admin-role]="user?.isAdmin">
+          <i class="fas" [class.fa-user]="!user?.isAdmin" [class.fa-shield-alt]="user?.isAdmin"></i>
+          {{ user?.isAdmin ? 'Administrator' : 'Regular User' }}
+        </p>
+      </div>
+      
+      <nav class="profile-nav">
+        <a [class.active]="!editMode" (click)="editMode = false">
+          <i class="fas fa-user"></i>
+          Profile Information
+        </a>
+        <a [class.active]="editMode" (click)="editMode = true">
+          <i class="fas fa-edit"></i>
+          Edit Profile
+        </a>
+        <a>
+          <i class="fas fa-lock"></i>
+          Change Password
+        </a>
+        <a routerLink="/orders">
+          <i class="fas fa-box"></i>
+          My Orders
+        </a>
+        <a routerLink="/cart">
+          <i class="fas fa-shopping-cart"></i>
+          My Cart
+        </a>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="profile-main">
+      <!-- Profile Information View -->
+      <div class="profile-section" *ngIf="!editMode">
+        <h2>Profile Information</h2>
+        
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Full Name</label>
+            <p>{{ user?.name }}</p>
+          </div>
+          
+          <div class="info-item">
+            <label>Age</label>
+            <p>{{ user?.age }} years</p>
+          </div>
+          
+          <div class="info-item">
+            <label>Email</label>
+            <p>{{ user?.email }}</p>
+          </div>
+          
+          <div class="info-item">
+            <label>Phone Number</label>
+            <p>{{ user?.phone }}</p>
+          </div>
+          
+          <div class="info-item full-width">
+            <label>Address</label>
+            <p>{{ user?.address || 'Not provided' }}</p>
+          </div>
+          
+          <div class="info-item">
+            <label>City</label>
+            <p>{{ user?.city || 'Not provided' }}</p>
+          </div>
+          
+          <div class="info-item">
+            <label>State</label>
+            <p>{{ user?.state || 'Not provided' }}</p>
+          </div>
+          
+          <div class="info-item">
+            <label>Pincode</label>
+            <p>{{ user?.pincode || 'Not provided' }}</p>
+          </div>
+        </div>
+        
+        <button class="btn-edit" (click)="editMode = true">
+          <i class="fas fa-edit"></i>
+          Edit Profile
+        </button>
+      </div>
+
+      <!-- Edit Profile Form -->
+      <div class="profile-section" *ngIf="editMode">
+        <h2>Edit Profile</h2>
+        
+        <div class="error-message" *ngIf="errorMessage">
+          <i class="fas fa-exclamation-circle"></i>
+          {{ errorMessage }}
+        </div>
+        
+        <div class="success-message" *ngIf="successMessage">
+          <i class="fas fa-check-circle"></i>
+          {{ successMessage }}
+        </div>
+        
+        <form [formGroup]="profileForm" (ngSubmit)="onUpdateProfile()">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Full Name *</label>
+              <input 
+                type="text" 
+                id="name" 
+                formControlName="name"
+                placeholder="Enter your full name"
+                [class.is-invalid]="isFieldInvalid(profileForm, 'name')"
+              >
+              <div class="invalid-feedback" *ngIf="isFieldInvalid(profileForm, 'name')">
+                Name is required
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="age">Age *</label>
+              <input 
+                type="number" 
+                id="age" 
+                formControlName="age"
+                placeholder="Enter your age"
+                [class.is-invalid]="isFieldInvalid(profileForm, 'age')"
+              >
+              <div class="invalid-feedback" *ngIf="isFieldInvalid(profileForm, 'age')">
+                Age must be between 18 and 120
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input 
+                type="email" 
+                id="email" 
+                formControlName="email"
+                [disabled]="true"
+              >
+            </div>
+            
+            <div class="form-group">
+              <label for="phone">Phone Number *</label>
+              <input 
+                type="tel" 
+                id="phone" 
+                formControlName="phone"
+                placeholder="10-digit mobile number"
+                maxlength="10"
+                [class.is-invalid]="isFieldInvalid(profileForm, 'phone')"
+              >
+              <div class="invalid-feedback" *ngIf="isFieldInvalid(profileForm, 'phone')">
+                Please enter a valid 10-digit phone number
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="address">Address</label>
+            <textarea 
+              id="address" 
+              formControlName="address"
+              rows="3"
+              placeholder="Enter your address"
+            ></textarea>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="city">City</label>
+              <input 
+                type="text" 
+                id="city" 
+                formControlName="city"
+                placeholder="Enter your city"
+              >
+            </div>
+            
+            <div class="form-group">
+              <label for="state">State</label>
+              <input 
+                type="text" 
+                id="state" 
+                formControlName="state"
+                placeholder="Enter your state"
+              >
+            </div>
+            
+            <div class="form-group">
+              <label for="pincode">Pincode</label>
+              <input 
+                type="text" 
+                id="pincode" 
+                formControlName="pincode"
+                placeholder="6-digit pincode"
+                maxlength="6"
+                [class.is-invalid]="isFieldInvalid(profileForm, 'pincode')"
+              >
+              <div class="invalid-feedback" *ngIf="isFieldInvalid(profileForm, 'pincode')">
+                Please enter a valid 6-digit pincode
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" (click)="toggleEditMode()">
+              Cancel
+            </button>
+            <button type="submit" class="btn-save" [disabled]="profileForm.invalid || loading">
+              <span *ngIf="!loading">Save Changes</span>
+              <span *ngIf="loading" class="spinner"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Change Password Section -->
+      <div class="profile-section password-section">
+        <h2>Change Password</h2>
+        
+        <div class="password-requirements-card">
+          <h4>Password Requirements:</h4>
+          <ul class="requirements-list">
+            <li><i class="fas fa-circle"></i> Minimum 8 characters long</li>
+            <li><i class="fas fa-circle"></i> At least one uppercase letter (A-Z)</li>
+            <li><i class="fas fa-circle"></i> At least one lowercase letter (a-z)</li>
+            <li><i class="fas fa-circle"></i> At least one number (0-9)</li>
+            <li><i class="fas fa-circle"></i> At least one special character (!&#64;#$%^&*_=+)</li>
+          </ul>
+        </div>
+        
+        <div class="error-message" *ngIf="passwordError">
+          <i class="fas fa-exclamation-circle"></i>
+          {{ passwordError }}
+        </div>
+        
+        <div class="success-message" *ngIf="passwordSuccess">
+          <i class="fas fa-check-circle"></i>
+          {{ passwordSuccess }}
+        </div>
+        
+        <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()">
+          <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <input 
+              type="password" 
+              id="currentPassword" 
+              formControlName="currentPassword"
+              placeholder="Enter current password"
+              [class.is-invalid]="isFieldInvalid(passwordForm, 'currentPassword')"
+            >
+            <div class="invalid-feedback" *ngIf="isFieldInvalid(passwordForm, 'currentPassword')">
+              Current password is required
+            </div>
+          </div>
+          
+          <div class="form-group password-strength-group">
+            <label for="newPassword">New Password</label>
+            <input 
+              type="password" 
+              id="newPassword" 
+              formControlName="newPassword"
+              placeholder="Enter new password"
+              [class.is-invalid]="isFieldInvalid(passwordForm, 'newPassword')"
+              (input)="getPasswordStrength()"
+            >
+            
+            <!-- Password Strength Meter -->
+            <div class="password-strength-meter" *ngIf="passwordForm.get('newPassword')?.value">
+              <div class="strength-bar">
+                <div class="strength-fill" 
+                     [style.width]="getPasswordStrength().width"
+                     [style.background-color]="getPasswordStrength().color">
+                </div>
+              </div>
+              <span class="strength-text" [style.color]="getPasswordStrength().color">
+                {{ getPasswordStrength().strength }}
+              </span>
+            </div>
+            
+            <div class="invalid-feedback" *ngIf="isFieldInvalid(passwordForm, 'newPassword')">
+              <ul class="validation-errors">
+                <li *ngIf="passwordForm.get('newPassword')?.errors?.['required']">Password is required</li>
+                <li *ngIf="passwordForm.get('newPassword')?.errors?.['minlength']">Minimum 8 characters required</li>
+                <li *ngIf="passwordForm.get('newPassword')?.errors?.['pattern']">
+                  Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!&#64;#$%^&*_=+)
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="confirmPassword">Confirm New Password</label>
+            <input 
+              type="password" 
+              id="confirmPassword" 
+              formControlName="confirmPassword"
+              placeholder="Re-enter new password"
+              [class.is-invalid]="passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched"
+            >
+            <div class="invalid-feedback" *ngIf="passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched">
+              Passwords do not match
+            </div>
+          </div>
+          
+          <button type="submit" class="btn-change-password" [disabled]="passwordForm.invalid || loading">
+            <span *ngIf="!loading">Change Password</span>
+            <span *ngIf="loading" class="spinner"></span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

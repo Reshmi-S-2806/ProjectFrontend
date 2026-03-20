@@ -1,0 +1,52 @@
+<div class="transactions-container">
+  <div class="header">
+    <h1>Transaction Details</h1>
+    <p>Overview of all orders and payments</p>
+  </div>
+
+  <div class="filter-section">
+    <label for="dateFilter">Filter by date:</label>
+    <input
+      type="date"
+      id="dateFilter"
+      [(ngModel)]="dateFilter"
+      placeholder="YYYY-MM-DD"
+    />
+  </div>
+
+  <div class="loading-spinner" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="transactions-table" *ngIf="!loading && !error">
+    <table>
+      <thead>
+        <tr>
+          <th>Transaction ID</th>
+          <th>Order ID</th>
+          <th>User</th>
+          <th>Amount</th>
+          <th>Method</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let t of filteredTransactions">
+          <td>{{ t.transaction_id }}</td>
+          <td>#{{ t.order_id }}</td>
+          <td>{{ getUserName(t.user_id) }}</td>
+          <td>₹{{ t.amount | number:'1.2-2' }}</td>
+          <td>{{ t.payment_method }}</td>
+          <td>{{ t.transaction_date | date:'medium' }}</td>
+        </tr>
+        <tr *ngIf="filteredTransactions.length === 0">
+          <td colspan="6" class="no-data">No transactions found</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,95 @@
+<div class="success-container" *ngIf="!loading && !error && order">
+  <div class="success-card">
+    <div class="success-icon">
+      <i class="fas fa-check-circle"></i>
+    </div>
+    
+    <h1>Payment Successful!</h1>
+    <p class="success-message">Thank you for your purchase. Your order has been confirmed.</p>
+    
+    <div class="order-details">
+      <h2>Order Details</h2>
+      
+      <div class="details-grid">
+        <div class="detail-row">
+          <span class="label">Order ID:</span>
+          <span class="value">#{{order.id}}</span>
+        </div>
+        
+        <div class="detail-row">
+          <span class="label">Order Date:</span>
+          <span class="value">{{order.order_date | date:'medium'}}</span>
+        </div>
+        
+        <div class="detail-row">
+          <span class="label">Payment Method:</span>
+          <span class="value">{{transaction?.payment_method | uppercase}}</span>
+        </div>
+        
+        <div class="detail-row">
+          <span class="label">Transaction ID:</span>
+          <span class="value">{{transaction?.transaction_id}}</span>
+        </div>
+        
+        <div class="detail-row">
+          <span class="label">Total Amount:</span>
+          <span class="value total">₹{{order.total_amount | number:'1.2-2'}}</span>
+        </div>
+      </div>
+      
+      <div class="shipping-details">
+        <h3>Shipping Address</h3>
+        <p>{{order.shipping_address}}</p>
+        <p>{{order.shipping_city}}, {{order.shipping_state}} {{order.shipping_pincode}}</p>
+      </div>
+      
+      <div class="order-items">
+        <h3>Order Items</h3>
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of order.items">
+              <td>{{item.product_name}}</td>
+              <td>{{item.quantity}}</td>
+              <td>₹{{item.price}}</td>
+              <td>₹{{item.subtotal}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="action-buttons">
+      <button class="btn-receipt" (click)="downloadReceipt()">
+        <i class="fas fa-download"></i> Download Receipt
+      </button>
+      <button class="btn-print" (click)="printReceipt()">
+        <i class="fas fa-print"></i> Print Receipt
+      </button>
+      <button class="btn-orders" routerLink="/orders">
+        <i class="fas fa-box"></i> View Orders
+      </button>
+      <button class="btn-shop" routerLink="/home">
+        <i class="fas fa-shopping-bag"></i> Continue Shopping
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="loading-spinner" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>Loading order details...</p>
+</div>
+
+<div class="error-message" *ngIf="error">
+  <i class="fas fa-exclamation-circle"></i>
+  <p>{{error}}</p>
+  <button (click)="goToHome()" class="btn-home">Go to Home</button>
+</div>

@@ -1,0 +1,37 @@
+<!-- Floating Chat Button -->
+<div class="chatbot-button" (click)="toggleChat()">
+  🤖
+</div>
+
+<!-- Chat Window -->
+<div class="chat-window" *ngIf="isOpen">
+
+  <div class="chat-header">
+    AI Payment Assistant
+    <span class="close-btn" (click)="toggleChat()">✖</span>
+  </div>
+
+  <div class="chat-body">
+
+    <div *ngFor="let msg of messages"
+         [ngClass]="msg.sender">
+
+        {{msg.text}}
+
+    </div>
+
+  </div>
+
+  <div class="chat-input">
+
+    <input
+      [(ngModel)]="userMessage"
+      placeholder="Ask about payments or fraud..."
+      (keyup.enter)="sendMessage()"
+    />
+
+    <button (click)="sendMessage()">Send</button>
+
+  </div>
+
+</div>

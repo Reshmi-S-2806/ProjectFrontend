@@ -1,0 +1,241 @@
+<div class="admin-container">
+  <div class="admin-header">
+    <h1>Admin Dashboard</h1>
+    <p>Manage your store, view transactions and orders</p>
+  </div>
+
+  <div class="admin-tabs">
+    <button 
+      [class.active]="activeTab === 'dashboard'"
+      (click)="switchTab('dashboard')"
+    >
+      <i class="fas fa-chart-line"></i>
+      Dashboard
+    </button>
+    <button 
+      [class.active]="activeTab === 'transactions'"
+      (click)="switchTab('transactions')"
+    >
+      <i class="fas fa-credit-card"></i>
+      Transactions
+    </button>
+    <button 
+      [class.active]="activeTab === 'orders'"
+      (click)="switchTab('orders')"
+    >
+      <i class="fas fa-shopping-bag"></i>
+      Orders
+    </button>
+  </div>
+
+  <!-- Dashboard Tab -->
+  <div class="dashboard-tab" *ngIf="activeTab === 'dashboard'">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-info">
+          <h3>Total Users</h3>
+          <p class="stat-value">{{stats.totalUsers}}</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-shopping-cart"></i>
+        </div>
+        <div class="stat-info">
+          <h3>Total Orders</h3>
+          <p class="stat-value">{{stats.totalOrders}}</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-rupee-sign"></i>
+        </div>
+        <div class="stat-info">
+          <h3>Total Revenue</h3>
+          <p class="stat-value">₹{{stats.totalRevenue | number:'1.2-2'}}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="recent-transactions">
+      <h2>Recent Transactions</h2>
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Transaction ID</th>
+              <th>User</th>
+              <th>Amount</th>
+              <th>Method</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let transaction of stats.recentTransactions">
+              <td>{{transaction.transaction_id}}</td>
+              <td>{{transaction.name}}</td>
+              <td>₹{{transaction.amount | number:'1.2-2'}}</td>
+              <td>{{transaction.payment_method}}</td>
+              <td>{{formatDate(transaction.transaction_date)}}</td>
+            </tr>
+            <tr *ngIf="stats.recentTransactions?.length === 0">
+              <td colspan="5" class="no-data">No recent transactions</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transactions Tab -->
+  <div class="transactions-tab" *ngIf="activeTab === 'transactions'">
+    <h2>All Transactions</h2>
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Transaction ID</th>
+            <th>Order ID</th>
+            <th>User</th>
+            <th>Email</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Status</th>
+            <th>Fraud Check</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let transaction of transactions">
+            <td>{{transaction.transaction_id}}</td>
+            <td>#{{transaction.order_id}}</td>
+            <td>{{transaction.user_name}}</td>
+            <td>{{transaction.email}}</td>
+            <td>₹{{transaction.amount | number:'1.2-2'}}</td>
+            <td>{{transaction.payment_method}}</td>
+            <td>
+              <span class="status-badge" [class]="getStatusClass(transaction.payment_status)">
+                {{transaction.payment_status}}
+              </span>
+            </td>
+            <td>
+    <span *ngIf="transaction.fraud_flag == 1" class="status-fraud">
+      ⚠ Fraud
+    </span>
+    <span *ngIf="transaction.fraud_flag == 0">
+      Safe
+    </span>
+  </td>
+            <td>{{formatDate(transaction.transaction_date)}}</td>
+            <div class="fraud-meter">
+
+  <div class="risk-label">
+    Fraud Score: {{ transaction.fraud_score | number:'1.2-2' }}
+  </div>
+
+  <div
+    class="risk-level"
+    [ngClass]="{
+      'risk-low': transaction.fraud_score < 0.4,
+      'risk-medium': transaction.fraud_score >= 0.4 && transaction.fraud_score < 0.7,
+      'risk-high': transaction.fraud_score >= 0.7
+    }">
+    {{
+      transaction.fraud_score < 0.4
+        ? 'LOW RISK'
+        : transaction.fraud_score < 0.7
+        ? 'MEDIUM RISK'
+        : 'HIGH RISK'
+    }}
+  </div>
+</div>
+<!-- <div *ngIf="transaction.fraud_score >= 0.7" class="fraud-alert">
+  🚨 FRAUD ALERT
+</div>
+<tr *ngFor="let transaction of transactions">
+
+<td>{{ transaction.amount }}</td>
+
+<td>{{ transaction.fraud_score | number:'1.2-2' }}</td>
+
+<td>
+
+<div *ngIf="transaction.fraud_score >= 0.7" class="fraud-alert">
+🚨 FRAUD ALERT
+</div>
+
+<div *ngIf="transaction.fraud_score < 0.7">
+Normal Transaction
+</div> -->
+
+<!-- </td> -->
+
+</tr>
+          <tr *ngIf="transactions.length === 0">
+            <td colspan="8" class="no-data">No transactions found</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Orders Tab -->
+  <div class="orders-tab" *ngIf="activeTab === 'orders'">
+    <h2>All Orders</h2>
+    
+    <div class="loading-spinner" *ngIf="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="error-message" *ngIf="error">
+      {{error}}
+    </div>
+
+    <div class="table-responsive" *ngIf="!loading && !error">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>User</th>
+            <th>Email</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders">
+            <td>#{{order.id}}</td>
+            <td>{{order.user_name}}</td>
+            <td>{{order.email}}</td>
+            <td>₹{{order.total_amount | number:'1.2-2'}}</td>
+            <td>
+              <span class="status-badge" [class]="getStatusClass(order.status)">
+                {{order.status}}
+              </span>
+            </td>
+            <td>
+              <span class="status-badge" [class]="getStatusClass(order.payment_status)">
+                {{order.payment_status}}
+              </span>
+            </td>
+            <td>
+              <span class="status-badge" [class]="getStatusClass(order.payment_status)">
+                {{order.order_date | date:'medium'}}
+              </span>
+            </td>
+          </tr>
+          <tr *ngIf="orders.length === 0">
+            <td colspan="7" class="no-data">No orders found</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

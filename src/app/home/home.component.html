@@ -1,0 +1,116 @@
+<div class="home-container">
+  <!-- Banner -->
+  <div class="banner">
+    <div class="banner-content">
+      <h1>Welcome to ShopEasy</h1>
+      <p>Discover amazing products at the best prices. Enjoy seamless shopping with our integrated payment gateway.</p>
+      <button class="btn-shop-now" (click)="shopNow()">Shop Now</button>
+    </div>
+  </div>
+
+  <!-- REMOVED: Search Results Banner - Completely removed -->
+
+  <!-- Shop by Category with Gradients -->
+  <div class="categories-section">
+    <h2>Shop by Category</h2>
+    <div class="categories-grid">
+      <!-- All Categories Card -->
+      <div class="category-card all-card" 
+           (click)="filterByCategory('All')"
+           [class.active]="selectedCategory === 'All'"
+           [ngStyle]="{'background': getCategoryGradient('All')}">
+        <div class="category-icon">
+          <i [class]="getCategoryIcon('All')"></i>
+        </div>
+        <h3>All Categories</h3>
+        <span class="product-count">{{getTotalProducts()}} items</span>
+      </div>
+      
+      <!-- Individual Category Cards -->
+      <div class="category-card" 
+           *ngFor="let category of categoryList" 
+           (click)="filterByCategory(category)"
+           [class.active]="selectedCategory === category"
+           [ngStyle]="{'background': getCategoryGradient(category)}">
+        <div class="category-icon">
+          <i [class]="getCategoryIcon(category)"></i>
+        </div>
+        <h3>{{category}}</h3>
+        <span class="product-count">{{getProductCountByCategory(category)}} items</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Products Section -->
+  <div class="products-section" id="products-section">
+    <h2>Our Products</h2>
+    
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Loading amazing products for you...</p>
+    </div>
+    
+    <!-- Error Message -->
+    <div class="error-message" *ngIf="error">
+      <i class="fas fa-exclamation-circle"></i>
+      <p>{{error}}</p>
+      <button class="btn-reset" (click)="loadProducts()">Try Again</button>
+    </div>
+    
+    <!-- Products Grid -->
+    <div class="products-grid" *ngIf="!loading && !error">
+      <div class="product-card" 
+           *ngFor="let product of filteredProducts"
+           [id]="'product-' + product.id"
+           [class.highlight]="isProductHighlighted(product.id)">
+        
+        <!-- Product Image with Gradient Background -->
+        <div class="product-image" [ngStyle]="{'background': getCategoryGradient(product.category)}">
+          <i [class]="getProductIcon(product.name)"></i>
+          <div class="product-overlay">
+            <button class="btn-add-to-cart-overlay" (click)="addToCart(product)">
+              <i class="fas fa-shopping-cart"></i> Add
+            </button>
+          </div>
+          <!-- Search Indicator for Highlighted Products -->
+          <div class="search-indicator" *ngIf="isProductHighlighted(product.id)">
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+        
+        <div class="product-info">
+          <h3 class="product-title">{{product.name}}</h3>
+          
+          <div class="description-container">
+            <p class="product-description">
+              {{product.description}}
+            </p>
+          </div>
+          
+          <div class="product-price">
+            <span class="current-price">₹{{product.price}}</span>
+          </div>
+          
+          <div class="product-rating">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star-half-alt"></i>
+            <span class="rating-count">(123 reviews)</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="no-products" *ngIf="filteredProducts.length === 0">
+        <i class="fas fa-box-open"></i>
+        <h3>No products found</h3>
+        <p>Try selecting a different category</p>
+        <button class="btn-reset" (click)="filterByCategory('All')">
+          <i class="fas fa-eye"></i> View All Products
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,212 @@
+<div class="payment-container">
+  <div class="payment-header">
+    <h1>Payment</h1>
+    <p>Order #{{orderId}}</p>
+  </div>
+
+  <div class="payment-content">
+    <div class="payment-methods">
+      <h3>Select Payment Method</h3>
+      
+      <div class="methods-grid">
+        <div 
+          class="method-card" 
+          *ngFor="let method of paymentMethods"
+          [class.active]="paymentMethod === method.id"
+          (click)="selectPaymentMethod(method.id)"
+        >
+          <i [class]="method.icon"></i>
+          <span>{{method.name}}</span>
+        </div>
+      </div>
+
+      <!-- UPI Payment Form -->
+      <div class="payment-form" *ngIf="paymentMethod === 'upi'">
+        <form [formGroup]="upiForm">
+          <div class="form-group">
+            <label for="upiId">UPI ID</label>
+            <input 
+              type="text" 
+              id="upiId" 
+              formControlName="upiId"
+              placeholder="example@okhdfcbank"
+              [class.is-invalid]="upiForm.get('upiId')?.invalid && upiForm.get('upiId')?.touched"
+            >
+            <div class="invalid-feedback" *ngIf="upiForm.get('upiId')?.invalid && upiForm.get('upiId')?.touched">
+              Please enter a valid UPI ID (e.g., name&#64;bank)
+            </div>
+          </div>
+          <small class="payment-note">You will receive a payment request on your UPI app</small>
+        </form>
+      </div>
+
+      <!-- Card Payment Form -->
+      <div class="payment-form" *ngIf="paymentMethod === 'card'">
+        <form [formGroup]="cardForm">
+          <div class="form-group">
+            <label for="cardNumber">Card Number</label>
+            <input 
+              type="text" 
+              id="cardNumber" 
+              formControlName="cardNumber"
+              placeholder="1234 5678 9012 3456"
+              maxlength="16"
+              [class.is-invalid]="cardForm.get('cardNumber')?.invalid && cardForm.get('cardNumber')?.touched"
+            >
+            <div class="invalid-feedback" *ngIf="cardForm.get('cardNumber')?.invalid && cardForm.get('cardNumber')?.touched">
+              Please enter a valid 16-digit card number
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="cardName">Name on Card</label>
+            <input 
+              type="text" 
+              id="cardName" 
+              formControlName="cardName"
+              placeholder="John Doe"
+              [class.is-invalid]="cardForm.get('cardName')?.invalid && cardForm.get('cardName')?.touched"
+            >
+            <div class="invalid-feedback" *ngIf="cardForm.get('cardName')?.invalid && cardForm.get('cardName')?.touched">
+              Name on card is required
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="expiryMonth">Expiry Month</label>
+              <input 
+                type="text" 
+                id="expiryMonth" 
+                formControlName="expiryMonth"
+                placeholder="MM"
+                maxlength="2"
+                [class.is-invalid]="cardForm.get('expiryMonth')?.invalid && cardForm.get('expiryMonth')?.touched"
+              >
+              <div class="invalid-feedback" *ngIf="cardForm.get('expiryMonth')?.invalid && cardForm.get('expiryMonth')?.touched">
+                Valid month (01-12)
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="expiryYear">Expiry Year</label>
+              <input 
+                type="text" 
+                id="expiryYear" 
+                formControlName="expiryYear"
+                placeholder="YYYY"
+                maxlength="4"
+                [class.is-invalid]="cardForm.get('expiryYear')?.invalid && cardForm.get('expiryYear')?.touched"
+              >
+              <div class="invalid-feedback" *ngIf="cardForm.get('expiryYear')?.invalid && cardForm.get('expiryYear')?.touched">
+                Valid year
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="cvv">CVV</label>
+              <input 
+                type="password" 
+                id="cvv" 
+                formControlName="cvv"
+                placeholder="123"
+                maxlength="4"
+                [class.is-invalid]="cardForm.get('cvv')?.invalid && cardForm.get('cvv')?.touched"
+              >
+              <div class="invalid-feedback" *ngIf="cardForm.get('cvv')?.invalid && cardForm.get('cvv')?.touched">
+                Valid CVV (3-4 digits)
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Net Banking Form -->
+      <div class="payment-form" *ngIf="paymentMethod === 'netbanking'">
+        <form [formGroup]="netBankingForm">
+          <div class="form-group">
+            <label for="bank">Select Bank</label>
+            <select id="bank" formControlName="bank" [class.is-invalid]="netBankingForm.get('bank')?.invalid && netBankingForm.get('bank')?.touched">
+              <option value="">Select Bank</option>
+              <option value="sbi">State Bank of India</option>
+              <option value="hdfc">HDFC Bank</option>
+              <option value="icici">ICICI Bank</option>
+              <option value="axis">Axis Bank</option>
+              <option value="kotak">Kotak Mahindra Bank</option>
+            </select>
+            <div class="invalid-feedback" *ngIf="netBankingForm.get('bank')?.invalid && netBankingForm.get('bank')?.touched">
+              Please select a bank
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="accountNumber">Account Number</label>
+            <input 
+              type="text" 
+              id="accountNumber" 
+              formControlName="accountNumber"
+              placeholder="Enter account number"
+              [class.is-invalid]="netBankingForm.get('accountNumber')?.invalid && netBankingForm.get('accountNumber')?.touched"
+            >
+            <div class="invalid-feedback" *ngIf="netBankingForm.get('accountNumber')?.invalid && netBankingForm.get('accountNumber')?.touched">
+              Please enter a valid account number
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="ifscCode">IFSC Code</label>
+            <input 
+              type="text" 
+              id="ifscCode" 
+              formControlName="ifscCode"
+              placeholder="SBIN0001234"
+              [class.is-invalid]="netBankingForm.get('ifscCode')?.invalid && netBankingForm.get('ifscCode')?.touched"
+            >
+            <div class="invalid-feedback" *ngIf="netBankingForm.get('ifscCode')?.invalid && netBankingForm.get('ifscCode')?.touched">
+              Please enter a valid IFSC code
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="payment-summary">
+      <h3>Payment Summary</h3>
+      
+      <div class="summary-details">
+        <div class="summary-row">
+          <span>Order Total:</span>
+          <span>₹{{orderTotal | number:'1.2-2'}}</span>
+        </div>
+        
+        <div class="summary-row total">
+          <span>Amount to Pay:</span>
+          <span>₹{{orderTotal | number:'1.2-2'}}</span>
+        </div>
+      </div>
+
+      <div class="error-message" *ngIf="error">
+        {{error}}
+      </div>
+
+      <button 
+        class="btn-pay" 
+        (click)="processPayment()"
+        [disabled]="
+          (paymentMethod === 'upi' && upiForm.invalid) ||
+          (paymentMethod === 'card' && cardForm.invalid) ||
+          (paymentMethod === 'netbanking' && netBankingForm.invalid) ||
+          loading
+        "
+      >
+        <span *ngIf="!loading">Pay ₹{{orderTotal | number:'1.2-2'}}</span>
+        <span *ngIf="loading" class="spinner"></span>
+      </button>
+
+      <p class="secure-payment">
+        <i class="fas fa-lock"></i>
+        Your payment information is secure and encrypted
+      </p>
+    </div>
+  </div>
+</div>

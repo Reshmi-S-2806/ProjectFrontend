@@ -1,0 +1,17 @@
+<div class="toast-container">
+  <div *ngFor="let toast of toasts" 
+       class="toast" 
+       [class]="toast.type"
+       [class.hiding]="!toast.visible">
+    <i [class]="getIcon(toast.type)"></i>
+    <span class="toast-message">{{toast.message}}</span>
+    
+    <button *ngIf="toast.type === 'undo'" class="btn-undo" (click)="onUndo(toast)">
+      UNDO
+    </button>
+    
+    <button class="close-btn" (click)="removeToast(toast.id!)">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+</div>
