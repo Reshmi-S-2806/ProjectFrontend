@@ -1,0 +1,27 @@
+# Dependency directories
+node_modules/
+
+# Compiled output
+dist/
+tmp/
+out-tsc/
+bazel-out/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.lock
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Environment variables (Security)
+.env
+src/environments/environment.prod.ts
