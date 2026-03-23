@@ -74,6 +74,14 @@
             "browserTarget": "shopeasy:build"
           }
         },
+        "optimization": {
+  "scripts": true,
+  "styles": {
+    "minify": true,
+    "inlineCritical": false
+  },
+  "fonts": false
+}
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
