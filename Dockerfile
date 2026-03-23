@@ -18,7 +18,8 @@ FROM nginx:stable-alpine
 
 # Copy the build output from the 'build' stage to the Nginx html folder
 # Note: Angular 17+ usually outputs to dist/shopeasy/browser
-COPY --from=build /app/dist/shopeasy/browser /usr/share/nginx/html
+# Option A: Try removing the /browser part
+COPY --from=build /app/dist/shopeasy /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
