@@ -11,7 +11,8 @@ RUN npm install --legacy-peer-deps
 COPY . .
 
 # Build the project for production
-RUN npx ng build --configuration=production --inline-critical=false
+# This flag turns off the font-downloading check that is failing
+RUN npx ng build --configuration=production --optimization=false
 
 # STAGE 2: Serve the application using Nginx
 FROM nginx:stable-alpine
