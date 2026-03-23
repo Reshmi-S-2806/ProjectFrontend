@@ -11,7 +11,7 @@ RUN npm install --legacy-peer-deps
 COPY . .
 
 # Build the project for production
-RUN npx ng build --configuration=production
+RUN npx ng build --configuration=production --inline-critical=false
 
 # STAGE 2: Serve the application using Nginx
 FROM nginx:stable-alpine
