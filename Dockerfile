@@ -10,22 +10,18 @@ RUN npm install --legacy-peer-deps
 COPY . .
 
 # 3. Build the project
-# We use --no-progress to keep the Jenkins log clean 
-# and --optimization=false to bypass the font download issue.
+# We use --optimization=false to prevent the 'Inlining of fonts failed' error.
 RUN npx ng build --configuration=production --optimization=false
 
 # STAGE 2: Serve the application using Nginx
 FROM nginx:stable-alpine
 
 # 4. Copy the build output
-# IMPORTANT: Angular 17+ creates a 'browser' subfolder. 
-# If your build still fails to show the site, check if it should be /app/dist/shopeasy/browser
-COPY --from=build /app/dist/shopeasy/browser /usr/share/nginx/html
+# Based on your logs, your files are in /app/dist/shopeasy (no /browser subfolder)
+COPY --from=build /app/dist/shopeasy /usr/share/nginx/html
 
-# 5. Add a custom Nginx config (Optional but recommended for Angular Routing)
-# If you have a custom nginx.conf, uncomment the line below:
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
-
+# 5. Expose port 80 for Nginx
 EXPOSE 80
 
+# 6. Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
