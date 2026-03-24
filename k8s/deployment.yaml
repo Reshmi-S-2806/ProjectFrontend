@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shopeasy-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: shopeasy
+  template:
+    metadata:
+      labels:
+        app: shopeasy
+    spec:
+      containers:
+      - name: frontend
+        image: shopeasy-frontend:latest
+        imagePullPolicy: Never # Crucial: tells K8s to use the local image you built
+        ports:
+        - containerPort: 80
