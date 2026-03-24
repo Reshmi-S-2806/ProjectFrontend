@@ -6,22 +6,14 @@ pipeline {
     }
 
     stages {
-        stage('Docker Build & Run') {
-            steps {
-                echo 'Starting Docker Build...'
-                
-                // 1. Build the image
-                bat 'docker build -t shopeasy-frontend:latest .'
-
-                // 2. Handle Windows Docker Cleanup
-                script {
-                    try {
-                        // We use 'catchError' or a try-catch so the build doesn't stop if the container isn't there
-                        bat 'docker stop shopeasy-container'
-                        bat 'docker rm shopeasy-container'
-                    } catch (Exception e) {
-                        echo "No existing container found to stop. Moving to run stage..."
-                    }
+        stage('Deploy to Kubernetes') {
+    steps {
+        bat 'kubectl apply -f k8s/deployment.yaml'
+        bat 'kubectl apply -f k8s/service.yaml'
+        // This forces Kubernetes to refresh the pods with your newest image
+        bat 'kubectl rollout restart deployment/shopeasy-frontend'
+    }
+}
                 }
 
                 // 3. Run the new container
