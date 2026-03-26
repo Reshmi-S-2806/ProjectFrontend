@@ -106,7 +106,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   loadProducts() {
     this.loading = true;
-    this.http.get<Product[]>('http://localhost:30002/api/products')
+    this.http.get<Product[]>('http://localhost:3000/api/products')
       .subscribe({
         next: (data) => {
           this.products = data;
