@@ -22,7 +22,7 @@ export class ChatbotComponent {
       text: this.userMessage
     });
 
-    this.http.post("http://localhost:30002/chat", {
+    this.http.post("http://localhost:3000/chat", {
       message: this.userMessage
     }).subscribe((res: any) => {
 
