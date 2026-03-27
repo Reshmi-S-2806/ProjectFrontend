@@ -7,7 +7,7 @@ import { Order } from '../models/models';
   providedIn: 'root'
 })
 export class OrderService {
-  private apiUrl = 'http://localhost:3000/api/orders';
+  private apiUrl = 'http://localhost:30002/api/orders';
 
   constructor(private http: HttpClient) {}
 
@@ -38,7 +38,7 @@ export class OrderService {
     });
     
     // Use the correct endpoint
-    return this.http.get(`http://localhost:3000/api/receipt/${orderId}`, {
+    return this.http.get(`http://localhost:30002/api/receipt/${orderId}`, {
       headers: headers,
       responseType: 'blob'
     });
