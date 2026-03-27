@@ -9,7 +9,7 @@ import { User, RegisterRequest } from '../models/models';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = 'http://localhost:30002/api';
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
   private cartCountSubject = new BehaviorSubject<number>(0);
