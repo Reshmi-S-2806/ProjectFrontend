@@ -26,7 +26,7 @@ export class TransactionsComponent implements OnInit {
 
   fetchTransactions() {
     const token = localStorage.getItem('token');
-    this.http.get('http://localhost:3000/api/admin/transactions', {
+    this.http.get('http://localhost:30002/api/admin/transactions', {
       headers: { Authorization: `Bearer ${token}` }
     }).subscribe({
       next: (data: any) => {
@@ -43,7 +43,7 @@ export class TransactionsComponent implements OnInit {
 
   fetchOrders() {
     const token = localStorage.getItem('token');
-    this.http.get('http://localhost:3000/api/admin/orders', {
+    this.http.get('http://localhost:30002/api/admin/orders', {
       headers: { Authorization: `Bearer ${token}` }
     }).subscribe({
       next: (data: any) => {
