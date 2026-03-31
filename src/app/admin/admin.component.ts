@@ -39,7 +39,7 @@ export class AdminComponent implements OnInit {
   }
 
   loadTransactions() {
-    this.http.get('http://localhost:3000/api/admin/transactions').subscribe({
+    this.http.get('http://localhost:30002/api/admin/transactions').subscribe({
       next: (data) => {
         this.transactions = data as any[];
       },
