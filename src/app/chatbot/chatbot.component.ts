@@ -10,6 +10,7 @@ export class ChatbotComponent {
 
   userMessage = "";
   messages: any[] = [];
+  isOpen = false;
 
   constructor(private http: HttpClient) {}
 
@@ -17,27 +18,36 @@ export class ChatbotComponent {
 
     if (!this.userMessage) return;
 
+    // Show user message
     this.messages.push({
       sender: "user",
       text: this.userMessage
     });
 
+    // API call to Node backend
     this.http.post("http://localhost:30002/chat", {
       message: this.userMessage
-    }).subscribe((res: any) => {
+    }).subscribe({
+      next: (res: any) => {
+        this.messages.push({
+          sender: "bot",
+          text: res.reply
+        });
+      },
+      error: (err) => {
+        console.error("Angular Error:", err);
 
-      this.messages.push({
-        sender: "bot",
-        text: res.reply
-      });
-
+        this.messages.push({
+          sender: "bot",
+          text: "Error connecting to chatbot."
+        });
+      }
     });
 
     this.userMessage = "";
   }
-  isOpen = false;
 
-toggleChat() {
-  this.isOpen = !this.isOpen;
-}
+  toggleChat() {
+    this.isOpen = !this.isOpen;
+  }
 }
